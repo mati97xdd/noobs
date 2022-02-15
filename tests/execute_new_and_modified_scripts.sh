@@ -13,7 +13,10 @@ scripts_to_be_tested=$(git diff --no-color --name-only "$latest_main_commit" "$c
 for item in $scripts_to_be_tested
 do
     echo "Executing $item"
-    chmod +x "$item"
+    if [[ `stat -c '%a' "$item"` != 7* ]]; then
+        echo "Failed, $item lacks execution permission."
+        exit 1
+    fi
     sudo bash "$item"
     if [[ $? -ne 0 ]]; then
         echo "Failed executing $item"
